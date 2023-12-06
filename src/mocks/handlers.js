@@ -12,7 +12,7 @@ export const handlers = [
     return HttpResponse.json({
       id: customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 11)(),
       ...body,
-      price: body.people * PRICES.person + body.lanes * PRICES.lane,
+      price: body.people * PRICES.PERSON + body.lanes * PRICES.LANE,
     });
   }),
 ];

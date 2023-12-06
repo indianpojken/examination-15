@@ -149,7 +149,7 @@ describe('Som användare vill jag kunna skicka iväg min reservation och få til
 
     test('Totalsumman', () => {
       expect(getConfirmation().price).toHaveTextContent(
-        `${DATA.people * PRICES.person + DATA.lanes * PRICES.lane} sek`
+        `${DATA.people * PRICES.PERSON + DATA.lanes * PRICES.LANE} sek`
       );
     });
   });
@@ -160,52 +160,48 @@ describe('Som användare vill jag kunna skicka iväg min reservation och få til
 });
 
 describe('Som användare vill jag kunna navigera mellan boknings-och bekräftelsevyn.', () => {
-  test('Användaren ska kunna klicka på en meny-knapp och alternativ att navigera till ska då visas.', async () => {
-    const navigation = screen.getByRole('navigation');
-    const menu = within(navigation).getByRole('img');
-    const links = within(navigation).getAllByRole('link');
+  const navigation = () => screen.getByRole('navigation');
 
-    links.forEach((link) => expect(link).toHaveClass('hide'));
-    await userEvent.click(menu);
-    links.forEach((link) => expect(link).not.toHaveClass('hide'));
+  const clickMenu = async () =>
+    await userEvent.click(within(navigation()).getByRole('img'));
+
+  const link = (title) =>
+    within(navigation()).getByRole('link', {
+      name: new RegExp(title, 'i'),
+    });
+
+  test('Användaren ska kunna klicka på en meny-knapp och alternativ att navigera till ska då visas.', async () => {
+    await clickMenu();
+    const links = within(navigation()).getAllByRole('link');
+
+    links.forEach((link) => expect(link).toBeVisible());
+    await clickMenu();
+    links.forEach((link) => expect(link).not.toBeVisible());
     expect(links.length).not.toBe(0);
   });
 
   test('Om användaren klickar på meny-knappen, när menyn är öppen, ska menyn stängas.', async () => {
-    const navigation = screen.getByRole('navigation');
-    const menu = within(navigation).getByRole('img');
+    await clickMenu();
+    expect(navigation()).toHaveClass('show-menu');
 
-    await userEvent.click(menu);
-    expect(navigation).toHaveClass('show-menu');
-
-    await userEvent.click(menu);
-    expect(navigation).not.toHaveClass('show-menu');
+    await clickMenu();
+    expect(navigation()).not.toHaveClass('show-menu');
   });
 
   test('Användaren ska kunna navigera från bokningsvyn till bekräftelsevyn.', async () => {
-    const navigation = screen.getByRole('navigation');
-    const linkToConfirmation = within(navigation).getByRole('link', {
-      name: /confirmation/i,
-    });
+    await clickMenu();
+    await userEvent.click(link('confirmation'));
 
-    await userEvent.click(linkToConfirmation);
     const header = screen.queryByRole('heading', { name: /booking/i });
-
     expect(header).not.toBeInTheDocument();
   });
 
   test('Användaren ska kunna navigera tillbaka till bokningsvyn från bekräftelsevyn.', async () => {
-    await userEvent.click(
-      within(screen.getByRole('navigation')).getByRole('link', {
-        name: /confirmation/i,
-      })
-    );
+    await clickMenu();
+    await userEvent.click(link('confirmation'));
 
-    await userEvent.click(
-      within(screen.getByRole('navigation')).getByRole('link', {
-        name: /booking/i,
-      })
-    );
+    await clickMenu();
+    await userEvent.click(link('booking'));
 
     expect(
       screen.getByRole('heading', { name: /booking/i })

@@ -9,6 +9,6 @@ export const ERROR_MESSAGE =
   'Fill out all the fields and make sure that people and shoes is the same number.';
 
 export const PRICES = {
-  person: 120,
-  lane: 100,
+  PERSON: 120,
+  LANE: 100,
 };
