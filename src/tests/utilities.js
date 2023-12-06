@@ -1,5 +1,6 @@
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { PRICES } from './constants';
 
 export function getBookingForm() {
   const [people, lanes] = screen.getAllByRole('spinbutton');
@@ -48,4 +49,8 @@ export function getConfirmation() {
     price: screen.getByText(/\d+ sek/),
     submit: screen.getByRole('button'),
   };
+}
+
+export function calculateTotal(people, lanes) {
+  return people * PRICES.person + lanes * PRICES.lane
 }

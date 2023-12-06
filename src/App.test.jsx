@@ -3,13 +3,14 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect } from 'vitest';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 
-import { DATA, ERROR_MESSAGE, PRICES } from './tests/constants.js';
+import { DATA, ERROR_MESSAGE } from './tests/constants.js';
 
 import {
   getBookingForm,
   mockBookingForm,
   addShoes,
   getConfirmation,
+  calculateTotal,
 } from './tests/utilities.js';
 
 import router from './router.jsx';
@@ -149,7 +150,7 @@ describe('Som användare vill jag kunna skicka iväg min reservation och få til
 
     test('Totalsumman', () => {
       expect(getConfirmation().price).toHaveTextContent(
-        `${DATA.people * PRICES.person + DATA.lanes * PRICES.lane} sek`
+        `${calculateTotal(DATA.people, DATA.lanes)} sek`
       );
     });
   });
@@ -197,6 +198,10 @@ describe('Som användare vill jag kunna navigera mellan boknings-och bekräftels
   test('Användaren ska kunna navigera tillbaka till bokningsvyn från bekräftelsevyn.', async () => {
     await userEvent.click(menu());
     await userEvent.click(link('confirmation'));
+
+    expect(
+      screen.queryByRole('heading', { name: /booking/i })
+    ).not.toBeInTheDocument();
 
     await userEvent.click(menu());
     await userEvent.click(link('booking'));
