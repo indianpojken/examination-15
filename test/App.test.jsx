@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect } from 'vitest';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 
-import { DATA, ERROR_MESSAGE } from './tests/constants.js';
+import { DATA, ERROR_MESSAGE } from './helpers/constants.js';
 
 import {
   getBookingForm,
@@ -11,9 +11,9 @@ import {
   addShoes,
   getConfirmation,
   calculateTotal,
-} from './tests/utilities.js';
+} from './helpers/utilities.js';
 
-import router from './router.jsx';
+import router from '../src/router.jsx';
 
 beforeEach(() => {
   const memoryRouter = createMemoryRouter(router.routes);

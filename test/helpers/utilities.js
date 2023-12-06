@@ -52,5 +52,5 @@ export function getConfirmation() {
 }
 
 export function calculateTotal(people, lanes) {
-  return people * PRICES.person + lanes * PRICES.lane
+  return people * PRICES.person + lanes * PRICES.lane;
 }
