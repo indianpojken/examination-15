@@ -22,16 +22,16 @@ beforeEach(() => {
 describe('Som användare vill jag kunna boka datum och tid samt ange antal spelare så att jag kan reservera 1 eller flera baner i bowlinghallen.', () => {
   describe('Användaren ska presenteras med ett formulär för att fylla i dom delar som krävs för att göra en bokning.', () => {
     test('Inmatningsfält för datum.', () =>
-      expect(getBookingForm().date).toBeVisible);
+      expect(getBookingForm().date).toBeVisible());
 
     test('Inmatningsfält för tid.', () =>
-      expect(getBookingForm().time).toBeVisible);
+      expect(getBookingForm().time).toBeVisible());
 
     test('Inmatningsfält för antal spelare.', () =>
-      expect(getBookingForm().people).toBeVisible);
+      expect(getBookingForm().people).toBeVisible());
 
     test('Inmatningsfält för antal banor.', () =>
-      expect(getBookingForm().lanes).toBeVisible);
+      expect(getBookingForm().lanes).toBeVisible());
   });
 
   test('Om användaren inte matar in samma antal skostorlekar, som antalet spelare, ska ett felmeddelande visas.', async () => {
@@ -160,52 +160,46 @@ describe('Som användare vill jag kunna skicka iväg min reservation och få til
 });
 
 describe('Som användare vill jag kunna navigera mellan boknings-och bekräftelsevyn.', () => {
-  test('Användaren ska kunna klicka på en meny-knapp och alternativ att navigera till ska då visas.', async () => {
-    const navigation = screen.getByRole('navigation');
-    const menu = within(navigation).getByRole('img');
-    const links = within(navigation).getAllByRole('link');
+  const navigation = () => screen.getByRole('navigation');
+  const menu = () => within(navigation()).getByRole('img');
 
-    links.forEach((link) => expect(link).toHaveClass('hide'));
-    await userEvent.click(menu);
-    links.forEach((link) => expect(link).not.toHaveClass('hide'));
+  const link = (title) =>
+    within(navigation()).getByRole('link', {
+      name: new RegExp(title, 'i'),
+    });
+
+  test('Användaren ska kunna klicka på en meny-knapp och alternativ att navigera till ska då visas.', async () => {
+    await userEvent.click(menu());
+    const links = within(navigation()).getAllByRole('link');
+
+    links.forEach((link) => expect(link).toBeVisible());
+    await userEvent.click(menu());
+    links.forEach((link) => expect(link).not.toBeVisible());
     expect(links.length).not.toBe(0);
   });
 
   test('Om användaren klickar på meny-knappen, när menyn är öppen, ska menyn stängas.', async () => {
-    const navigation = screen.getByRole('navigation');
-    const menu = within(navigation).getByRole('img');
+    await userEvent.click(menu());
+    expect(navigation()).toHaveClass('show-menu');
 
-    await userEvent.click(menu);
-    expect(navigation).toHaveClass('show-menu');
-
-    await userEvent.click(menu);
-    expect(navigation).not.toHaveClass('show-menu');
+    await userEvent.click(menu());
+    expect(navigation()).not.toHaveClass('show-menu');
   });
 
   test('Användaren ska kunna navigera från bokningsvyn till bekräftelsevyn.', async () => {
-    const navigation = screen.getByRole('navigation');
-    const linkToConfirmation = within(navigation).getByRole('link', {
-      name: /confirmation/i,
-    });
+    await userEvent.click(menu());
+    await userEvent.click(link('confirmation'));
 
-    await userEvent.click(linkToConfirmation);
     const header = screen.queryByRole('heading', { name: /booking/i });
-
     expect(header).not.toBeInTheDocument();
   });
 
   test('Användaren ska kunna navigera tillbaka till bokningsvyn från bekräftelsevyn.', async () => {
-    await userEvent.click(
-      within(screen.getByRole('navigation')).getByRole('link', {
-        name: /confirmation/i,
-      })
-    );
+    await userEvent.click(menu());
+    await userEvent.click(link('confirmation'));
 
-    await userEvent.click(
-      within(screen.getByRole('navigation')).getByRole('link', {
-        name: /booking/i,
-      })
-    );
+    await userEvent.click(menu());
+    await userEvent.click(link('booking'));
 
     expect(
       screen.getByRole('heading', { name: /booking/i })
