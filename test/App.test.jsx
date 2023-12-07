@@ -11,7 +11,7 @@ import {
   addShoes,
   getConfirmation,
   calculateTotal,
-} from './helpers/utilities.js';
+} from './helpers/utils.js';
 
 import router from '../src/router.jsx';
 

@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw';
 import { customAlphabet } from 'nanoid';
 
-import { calculateTotal } from '../test/helpers/utilities.js';
+import { calculateTotal } from '../test/helpers/utils.js';
 
 const URI = 'https://h5jbtjv6if.execute-api.eu-north-1.amazonaws.com';
 
